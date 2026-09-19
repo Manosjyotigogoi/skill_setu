@@ -1321,7 +1321,6 @@ export default function DigitalDossier() {
               ✓ Digitally Signed Credential
             </div>
 
-  
 
             <button
               onClick={() => setShowQrModal(false)}
