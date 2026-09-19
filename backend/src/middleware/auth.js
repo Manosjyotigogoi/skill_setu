@@ -34,6 +34,24 @@ async function protect(req, res, next) {
   }
 }
 
+async function optionalAuth(req, res, next) {
+  try {
+    const token = getTokenFromRequest(req);
+    if (token) {
+      const decoded = verifyToken(token);
+      if (decoded?.sub) {
+        const user = await User.findById(decoded.sub);
+        if (user) {
+          req.user = user;
+        }
+      }
+    }
+  } catch {
+    // Ignore invalid/expired token for optional routes
+  }
+  next();
+}
+
 function restrictTo(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
@@ -43,4 +61,5 @@ function restrictTo(...roles) {
   };
 }
 
-module.exports = { protect, restrictTo };
+module.exports = { protect, optionalAuth, restrictTo };
+
