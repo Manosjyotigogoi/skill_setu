@@ -15,9 +15,10 @@ import PlacementAdmin from './views/PlacementAdmin';
 import DigitalDossier from './views/DigitalDossier';
 import AdminPortal from './views/AdminPortal';
 import CheckInResponse from './views/CheckInResponse';
+import EmployerApplicantVerification from './views/EmployerApplicantVerification';
 
-// Hash-based routing for the check-in response page (accessed via email link,
-// no auth required). Format: #/check-in/<checkInId>
+// Hash-based routing for public pages (accessed via link/QR, no auth required).
+// Format: #/check-in/<checkInId> or #/verify/<skillSetuId>
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash);
   useEffect(() => {
@@ -36,8 +37,18 @@ function CheckInRoute() {
   return <CheckInResponse id={match[1]} />;
 }
 
+function ApplicantVerificationRoute() {
+  const hash = useHashRoute();
+  const hashMatch = hash.match(/^#\/(?:verify|applicant)\/(.+)$/);
+  const pathMatch = typeof window !== 'undefined' ? window.location.pathname.match(/^\/(?:verify|applicant)\/(.+)$/) : null;
+  const queryMatch = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : null;
+  const skillSetuId = hashMatch ? decodeURIComponent(hashMatch[1]) : (pathMatch ? decodeURIComponent(pathMatch[1]) : queryMatch);
+
+  return <EmployerApplicantVerification skillSetuId={skillSetuId} />;
+}
+
 function AuthenticatedShell() {
-  const { activeTab, setActiveTab, triggerLogout } = useApp();
+  const { activeTab, setActiveTab, triggerLogout, profile } = useApp();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-canvas)' }}>
@@ -50,6 +61,11 @@ function AuthenticatedShell() {
         {activeTab === 'skill-gap-and-courses' && <SkillGapCourses />}
         {activeTab === 'placement-cell-admin' && <PlacementAdmin />}
         {activeTab === 'user-id' && <DigitalDossier />}
+        {activeTab === 'applicant-verification' && (
+          <EmployerApplicantVerification
+            skillSetuId={profile?.skillSetuId || profile?.aicteId || profile?.id}
+          />
+        )}
       </main>
 
       {/* Clean Modern Institutional Footer */}
@@ -182,8 +198,17 @@ function MainContent() {
   // Check-in response page (accessed via email link, no auth needed).
   // This is checked FIRST so it bypasses the auth-boot splash.
   const hash = typeof window !== 'undefined' ? window.location.hash : '';
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
   if (hash.startsWith('#/check-in/')) {
     return <CheckInRoute />;
+  }
+  if (
+    hash.startsWith('#/verify') ||
+    hash.startsWith('#/applicant') ||
+    pathname.startsWith('/verify') ||
+    pathname.startsWith('/applicant')
+  ) {
+    return <ApplicantVerificationRoute />;
   }
 
   // While we are probing GET /api/auth/me on first mount, render a minimal

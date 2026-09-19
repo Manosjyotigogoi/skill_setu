@@ -50,13 +50,15 @@ export default function DigitalDossier() {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState('');
   const avatarInputRef = useRef(null);
 
-  // Target URL encoded by the profile QR code. Reads QR_PLACEHOLDER_URL from .env
-  // (designed to easily transition to individual user profile URLs in the future).
-  const qrTargetUrl =
-    profile?.qrTargetUrl ||
-    import.meta.env.QR_PLACEHOLDER_URL ||
-    import.meta.env.VITE_QR_PLACEHOLDER_URL ||
-    'https://www.youtube.com/';
+  // Target URL encoded by the profile QR code leading to this user's verified applicant dossier page.
+  const userIdentifier = profile?.skillSetuId || profile?.aicteId || profile?.id || profile?._id;
+  const baseUrl = (typeof window !== 'undefined' && window.location.origin)
+    ? window.location.origin
+    : (import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173');
+
+  const qrTargetUrl = userIdentifier
+    ? `${baseUrl}/#/verify/${encodeURIComponent(userIdentifier)}`
+    : `${baseUrl}/#/verify`;
 
   useEffect(() => {
     if (!qrTargetUrl) return;
@@ -1321,14 +1323,52 @@ export default function DigitalDossier() {
               ✓ Digitally Signed Credential
             </div>
 
-
-            <button
-              onClick={() => setShowQrModal(false)}
-              className="btn btn-navy btn-sm"
-              style={{ width: '100%' }}
+            <div
+              style={{
+                padding: '0.65rem 0.85rem',
+                background: 'var(--surface-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                width: '100%',
+                wordBreak: 'break-all',
+                fontSize: '0.75rem',
+                color: 'var(--text-muted)',
+                textAlign: 'left'
+              }}
             >
-              Close
-            </button>
+              <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '3px' }}>
+                Applicant Verification URL
+              </div>
+              <a
+                href={qrTargetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--secondary)', textDecoration: 'underline', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <span>{qrTargetUrl}</span>
+                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>open_in_new</span>
+              </a>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+              <a
+                href={qrTargetUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary btn-sm"
+                style={{ flex: 1, textAlign: 'center', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>visibility</span>
+                Preview Dossier
+              </a>
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="btn btn-navy btn-sm"
+                style={{ flex: 1 }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

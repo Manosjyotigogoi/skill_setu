@@ -500,6 +500,19 @@ export default function Navbar() {
                   <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>badge</span>
                   <span>Profile &amp; Documents</span>
                 </button>
+                <button
+                  onClick={() => {
+                    const id = profile?.skillSetuId || profile?.aicteId || profile?.id || 'me';
+                    window.location.hash = `/verify/${encodeURIComponent(id)}`;
+                    setProfileMenuOpen(false);
+                  }}
+                  className="civic-nav-link"
+                  role="menuitem"
+                  style={{ width: '100%', justifyContent: 'flex-start', padding: '0.65rem 0.75rem' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#059669' }}>verified</span>
+                  <span>Employer Verification View</span>
+                </button>
                 {['admin', 'university_admin', 'government_admin'].includes(userRole) && (
                   <button
                     onClick={() => {
