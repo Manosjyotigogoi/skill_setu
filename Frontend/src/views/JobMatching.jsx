@@ -178,7 +178,7 @@ export default function JobMatching() {
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5, flex: 1, margin: 0 }}>{job.description || 'No description provided.'}</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                 <span className="badge badge-info" style={{ fontSize: '0.68rem' }}>{job.matchPercentage ?? 0}% Match</span>
-                {(job.matchedSkills || []).map((skill) => <span key={`match-${skill}`} className="badge badge-success" style={{ fontSize: '0.68rem' }}>&check; {skill}</span>)}
+                {(job.matchedSkills || []).map((skill) => <span key={`match-${skill}`} className="badge badge-success" style={{ fontSize: '0.68rem' }}>✓ {skill}</span>)}
                 {(job.missingSkills || []).map((skill) => <span key={`missing-${skill}`} className="badge badge-warning" style={{ fontSize: '0.68rem' }}>Gap: {skill}</span>)}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)', gap: '0.5rem' }}>
@@ -271,7 +271,7 @@ export default function JobMatching() {
                   <span style={{ fontSize: '0.72rem', color: 'var(--text-light)', fontWeight: 700, textTransform: 'uppercase' }}>Skills Requirement</span>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                     {drive.matchedSkills.map((sk, i) => (
-                      <span key={i} className="badge badge-info" style={{ fontSize: '0.72rem' }}>&check; {sk}</span>
+                      <span key={i} className="badge badge-info" style={{ fontSize: '0.72rem' }}>✓ {sk}</span>
                     ))}
                     {drive.missingSkills.map((sk, i) => (
                       <span key={`miss-${i}`} className="badge badge-warning" style={{ fontSize: '0.72rem' }}>Gap: {sk}</span>
@@ -340,7 +340,7 @@ export default function JobMatching() {
               <div style={{ color: 'var(--text-body)' }}>Candidate: <strong>{profile?.name || '—'}</strong> ({profile?.rollNo || '—'})</div>
               <div style={{ color: 'var(--text-muted)' }}>AICTE ID: {profile?.aicteId || '—'} &bull; CGPA: {profile?.cgpa ?? '—'}</div>
               <div style={{ color: 'var(--text-muted)' }}>Verified Skills: <strong>{profile?.verifiedSkillsCount ?? 0} Competencies Attached</strong></div>
-              <div style={{ color: 'var(--success)', fontWeight: 600, marginTop: '0.25rem' }}>&check; Verified academic credentials will be submitted directly to recruiter portal.</div>
+              <div style={{ color: 'var(--success)', fontWeight: 600, marginTop: '0.25rem' }}>✓ Verified academic credentials will be submitted directly to recruiter portal.</div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
               <button onClick={() => setActiveJobModal(null)} className="btn btn-secondary btn-sm">Cancel</button>
@@ -393,7 +393,7 @@ export default function JobMatching() {
                     <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Strengths Verified</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
                       {skillGapModal.data.matchedSkills.map((sk) => (
-                        <span key={sk} className="badge badge-success">&check; {sk}</span>
+                        <span key={sk} className="badge badge-success">✓ {sk}</span>
                       ))}
                     </div>
                   </div>

@@ -1,15 +1,22 @@
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 
 const UPLOAD_DIR = path.join(__dirname, '..', '..', 'uploads');
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 const ALLOWED_MIME_TYPES = new Set([
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'image/png',
-  'image/jpeg'
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/gif'
 ]);
 
 const storage = multer.diskStorage({

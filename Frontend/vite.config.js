@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  envPrefix: ['VITE_', 'QR_'],
   server: {
     // Proxy /api → backend so the frontend can call relative '/api/...' URLs
     // in dev without CORS friction. Cookies (credentials: 'include') flow

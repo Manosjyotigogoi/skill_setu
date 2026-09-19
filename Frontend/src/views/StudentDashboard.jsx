@@ -65,13 +65,44 @@ export default function StudentDashboard() {
               </span>
             </div>
 
-            <div>
-              <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em', marginBottom: '0.35rem' }}>
-                Welcome back, {(profile.name || (isTrainee ? 'Trainee' : 'Student')).split(' ')[0]}
-              </h1>
-              <p style={{ fontSize: '0.925rem', color: 'var(--text-muted)' }}>
-                {profile.degree || (isTrainee ? 'Vocational Training Program' : 'Degree')} &bull; {profile.institution || (isTrainee ? 'Government Skill Center' : 'University')}
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', marginTop: '0.25rem' }}>
+              <div
+                onClick={() => setActiveTab('user-id')}
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '50%',
+                  background: '#102A43',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  border: '2px solid var(--secondary)',
+                  cursor: 'pointer'
+                }}
+                title="View &amp; edit profile"
+              >
+                {profile.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={profile.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span className="material-symbols-outlined" style={{ fontSize: '30px', color: '#FFFFFF' }}>
+                    person
+                  </span>
+                )}
+              </div>
+              <div>
+                <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em', marginBottom: '0.2rem' }}>
+                  Welcome back, {(profile.name || (isTrainee ? 'Trainee' : 'Student')).split(' ')[0]}
+                </h1>
+                <p style={{ fontSize: '0.925rem', color: 'var(--text-muted)' }}>
+                  {profile.degree || (isTrainee ? 'Vocational Training Program' : 'Degree')} &bull; {profile.institution || (isTrainee ? 'Government Skill Center' : 'University')}
+                </p>
+              </div>
             </div>
           </div>
 

@@ -464,6 +464,58 @@ export function AppProvider({ children }) {
     [showToast]
   );
 
+  // ----- Avatar upload / delete -----
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  const uploadAvatar = useCallback(
+    async (file) => {
+      if (!file) return null;
+      setIsUploadingAvatar(true);
+      try {
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        const res = await api.upload('/profile/avatar', formData);
+        if (res && res.profile) {
+          setProfile(res.profile);
+        } else if (res && res.avatarUrl) {
+          setProfile((prev) => (prev ? { ...prev, avatarUrl: res.avatarUrl } : prev));
+        }
+        showToast('Profile picture updated successfully!', 'success');
+        return res;
+      } catch (err) {
+        const msg =
+          err instanceof ApiError ? err.message : 'Could not upload profile picture.';
+        showToast(msg, 'error');
+        return null;
+      } finally {
+        setIsUploadingAvatar(false);
+      }
+    },
+    [showToast]
+  );
+
+  const deleteAvatar = useCallback(
+    async () => {
+      try {
+        const res = await api.delete('/profile/avatar');
+        if (res && res.profile) {
+          setProfile(res.profile);
+        } else {
+          setProfile((prev) => (prev ? { ...prev, avatarUrl: '' } : prev));
+        }
+        showToast('Profile picture removed.', 'info');
+        return true;
+      } catch (err) {
+        const msg =
+          err instanceof ApiError ? err.message : 'Could not remove profile picture.';
+        showToast(msg, 'error');
+        return false;
+      }
+    },
+    [showToast]
+  );
+
   // ----- Admin actions -----
   const approveStudentCredentials = useCallback(
     async (studentId) => {
@@ -691,6 +743,9 @@ export function AppProvider({ children }) {
         setProfile,
         updateProfile,
         updateSettings,
+        uploadAvatar,
+        deleteAvatar,
+        isUploadingAvatar,
         fetchProfile,
         skills,
         setSkills,

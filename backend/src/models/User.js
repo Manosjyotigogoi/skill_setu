@@ -160,6 +160,7 @@ userSchema.methods.toPublicProfile = function toPublicProfile() {
     preferredJobLocations: this.preferredJobLocations || [],
     targetRoleIds: (this.targetRoleIds || []).map((r) => (r && r._id ? r._id.toString() : r.toString())),
     whatsappOptIn: this.whatsappOptIn,
+    qrTargetUrl: process.env.QR_PLACEHOLDER_URL || undefined,
     settings: this.settings,
     createdAt: this.createdAt
   };

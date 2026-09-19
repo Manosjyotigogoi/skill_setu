@@ -397,19 +397,30 @@ export default function Navbar() {
               </div>
               <div
                 style={{
-                  width: '30px',
-                  height: '30px',
+                  width: '32px',
+                  height: '32px',
                   borderRadius: '50%',
                   background: '#102A43',
                   color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                  border: '1.5px solid var(--border-medium)'
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
-                  person
-                </span>
+                {profile?.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={profile.name || 'User'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                    person
+                  </span>
+                )}
               </div>
               <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--text-muted)' }}>
                 {profileMenuOpen ? 'expand_less' : 'expand_more'}
@@ -423,7 +434,7 @@ export default function Navbar() {
                   position: 'absolute',
                   top: 'calc(100% + 0.5rem)',
                   right: 0,
-                  minWidth: '210px',
+                  minWidth: '220px',
                   padding: '0.4rem',
                   background: '#FFFFFF',
                   border: '1px solid var(--border-subtle)',
@@ -432,6 +443,51 @@ export default function Navbar() {
                   zIndex: 20
                 }}
               >
+                <div
+                  style={{
+                    padding: '0.65rem 0.75rem',
+                    borderBottom: '1px solid var(--border-subtle)',
+                    marginBottom: '0.35rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.65rem'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#102A43',
+                      color: '#FFFFFF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      flexShrink: 0
+                    }}
+                  >
+                    {profile?.avatarUrl ? (
+                      <img
+                        src={profile.avatarUrl}
+                        alt={profile.name || 'User'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                        person
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                      {profile?.name || 'Candidate'}
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                      {profile?.email || profile?.phone || 'Verified Identity'}
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={() => {
                     setActiveTab('user-id');

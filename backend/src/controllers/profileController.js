@@ -1,5 +1,8 @@
+const fs = require('fs');
+const path = require('path');
 const mongoose = require('mongoose');
 const asyncHandler = require('../utils/asyncHandler');
+const { uploadAvatar, deleteCloudinaryImage } = require('../services/cloudinaryService');
 
 // Fields the student/trainee is allowed to self-edit. Government-issued
 // identifiers (aicteId, regId, skillSetuId, rollNo) and cached scores are
@@ -107,4 +110,69 @@ const updateSettings = asyncHandler(async (req, res) => {
   res.json({ settings: req.user.settings });
 });
 
-module.exports = { getMyProfile, updateMyProfile, updateSettings };
+// POST /api/profile/avatar
+const uploadMyAvatar = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image file uploaded. Use the "avatar" form field.' });
+  }
+
+  if (!req.file.mimetype.startsWith('image/')) {
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    return res.status(400).json({ message: 'Only image files (JPEG, PNG, WebP, GIF) are allowed for profile pictures.' });
+  }
+
+  try {
+    const remoteImage = await uploadAvatar(req.file.path, 'skill-setu/avatars');
+
+    let newAvatarUrl = '';
+    if (remoteImage && remoteImage.secure_url) {
+      newAvatarUrl = remoteImage.secure_url;
+      // Clean up local temp file
+      if (fs.existsSync(req.file.path)) {
+        fs.unlink(req.file.path, () => {});
+      }
+    } else {
+      // Fallback to local uploads URL if Cloudinary is offline/unconfigured
+      newAvatarUrl = `/uploads/${req.file.filename}`;
+    }
+
+    // Clean up previous avatar if it was on Cloudinary
+    if (req.user.avatarUrl && req.user.avatarUrl.includes('res.cloudinary.com')) {
+      deleteCloudinaryImage(req.user.avatarUrl).catch(() => {});
+    }
+
+    req.user.avatarUrl = newAvatarUrl;
+    await req.user.save();
+
+    res.json({
+      message: 'Profile picture updated successfully.',
+      avatarUrl: req.user.avatarUrl,
+      profile: req.user.toPublicProfile()
+    });
+  } catch (err) {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlink(req.file.path, () => {});
+    }
+    return res.status(500).json({ message: err.message || 'Failed to process avatar upload.' });
+  }
+});
+
+// DELETE /api/profile/avatar
+const deleteMyAvatar = asyncHandler(async (req, res) => {
+  if (req.user.avatarUrl) {
+    if (req.user.avatarUrl.includes('res.cloudinary.com')) {
+      deleteCloudinaryImage(req.user.avatarUrl).catch(() => {});
+    }
+    req.user.avatarUrl = '';
+    await req.user.save();
+  }
+
+  res.json({
+    message: 'Profile picture removed successfully.',
+    profile: req.user.toPublicProfile()
+  });
+});
+
+module.exports = { getMyProfile, updateMyProfile, updateSettings, uploadMyAvatar, deleteMyAvatar };

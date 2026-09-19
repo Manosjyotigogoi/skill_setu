@@ -55,6 +55,7 @@ const verifyDossier = asyncHandler(async (req, res) => {
     verified: user.sovereignStatus === 'VERIFIED_LINKED',
     candidate: {
       name: user.name,
+      avatarUrl: user.avatarUrl,
       skillSetuId: user.skillSetuId,
       degree: user.degree,
       institution: user.institution,

@@ -1362,7 +1362,7 @@ export default function AdminPortal() {
                           <td>
                             {isVerified ? (
                               <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
-                                &check; Verified
+                                ✓ Verified
                               </span>
                             ) : (
                               <button
