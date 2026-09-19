@@ -53,7 +53,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span className="badge badge-success">
-              &check; Sovereign ID Linked
+              ✓ Sovereign ID Linked
             </span>
             <button
               onClick={() => setActiveTab('auth')}
@@ -98,11 +98,11 @@ export default function LandingPage() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '1.25rem', fontSize: '0.8rem', color: 'var(--text-muted)', flexWrap: 'wrap', paddingTop: '0.5rem' }}>
-                  <span>&check; National Registry Live Sync</span>
+                  <span>✓ National Registry Live Sync</span>
                   <span>&bull;</span>
-                  <span>&check; Cryptographic Credential Ledger</span>
+                  <span>✓ Cryptographic Credential Ledger</span>
                   <span>&bull;</span>
-                  <span>&check; Zero Resume Fraud</span>
+                  <span>✓ Zero Resume Fraud</span>
                 </div>
               </div>
 

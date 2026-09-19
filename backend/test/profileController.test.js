@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { updateMyProfile } = require('../src/controllers/profileController');
+const { updateMyProfile, uploadMyAvatar, deleteMyAvatar } = require('../src/controllers/profileController');
 
 function makeResponse() {
   return {
@@ -88,4 +88,87 @@ test('rejects empty or non-string list entries', async () => {
 
   assert.equal(res.statusCode, 400);
   assert.match(res.body.message, /preferredJobLocations must contain only non-empty strings/);
+});
+
+test('uploadMyAvatar returns 400 when no file is uploaded', async () => {
+  const user = makeUser();
+  const req = { user };
+  const res = makeResponse();
+  let nextError;
+
+  await uploadMyAvatar(req, res, (err) => { nextError = err; });
+
+  assert.equal(nextError, undefined);
+  assert.equal(res.statusCode, 400);
+  assert.match(res.body.message, /No image file uploaded/);
+});
+
+test('uploadMyAvatar returns 400 when uploaded file is not an image', async () => {
+  const user = makeUser();
+  const req = {
+    user,
+    file: {
+      mimetype: 'application/pdf',
+      path: 'dummy-path.pdf'
+    }
+  };
+  const res = makeResponse();
+  let nextError;
+
+  await uploadMyAvatar(req, res, (err) => { nextError = err; });
+
+  assert.equal(nextError, undefined);
+  assert.equal(res.statusCode, 400);
+  assert.match(res.body.message, /Only image files/);
+});
+
+test('deleteMyAvatar clears user avatarUrl and returns public profile', async () => {
+  const user = makeUser({ avatarUrl: 'https://res.cloudinary.com/demo/image/upload/v1/skill-setu/avatars/test.jpg' });
+  const req = { user };
+  const res = makeResponse();
+  let nextError;
+
+  await deleteMyAvatar(req, res, (err) => { nextError = err; });
+
+  assert.equal(nextError, undefined);
+  assert.equal(res.statusCode, 200);
+  assert.equal(user.avatarUrl, '');
+  assert.equal(user.saved, true);
+  assert.match(res.body.message, /Profile picture removed successfully/);
+});
+
+test('profileRoutes exposes POST /avatar and DELETE /avatar', () => {
+  const router = require('../src/routes/profileRoutes');
+  const routes = router.stack
+    .filter((layer) => layer.route)
+    .map((layer) => ({
+      path: layer.route.path,
+      methods: Object.keys(layer.route.methods)
+    }));
+
+  const postAvatar = routes.find((r) => r.path === '/avatar' && r.methods.includes('post'));
+  const deleteAvatar = routes.find((r) => r.path === '/avatar' && r.methods.includes('delete'));
+
+  assert.ok(postAvatar, 'POST /avatar route should exist');
+  assert.ok(deleteAvatar, 'DELETE /avatar route should exist');
+});
+
+test('updateMyProfile updates all career and employment status fields', async () => {
+  const { user, res } = await update({
+    employmentStatus: 'Employed',
+    employmentSummary: 'Lead Full-Stack Developer at TechCorp',
+    currentRole: 'Lead Engineer',
+    currentCompany: 'TechCorp',
+    currentPackage: '18 LPA',
+    experienceYears: 3
+  });
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(user.employmentStatus, 'Employed');
+  assert.equal(user.employmentSummary, 'Lead Full-Stack Developer at TechCorp');
+  assert.equal(user.currentRole, 'Lead Engineer');
+  assert.equal(user.currentCompany, 'TechCorp');
+  assert.equal(user.currentPackage, '18 LPA');
+  assert.equal(user.experienceYears, 3);
+  assert.equal(user.saved, true);
 });

@@ -39,6 +39,7 @@ const getRoster = asyncHandler(async (req, res) => {
       return {
         id: student._id,
         name: student.name,
+        avatarUrl: student.avatarUrl || '',
         rollNo: student.rollNo,
         branch: student.branch,
         cgpa: student.cgpa,

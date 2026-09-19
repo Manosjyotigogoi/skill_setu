@@ -18,9 +18,12 @@ const checkInRoutes = require('./routes/checkInRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+const { UPLOAD_DIR } = require('./middleware/upload');
 
 function createApp() {
   const app = express();
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.use(helmet());
   app.use(
